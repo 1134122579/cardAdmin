@@ -2,7 +2,12 @@
   <div class="app-container">
     <!-- 搜索 -->
     <el-card>
-      <el-form :inline="true" :model="listQuery" label-width="160px" class="demo-form-inline">
+      <el-form
+        :inline="true"
+        :model="listQuery"
+        label-width="160px"
+        class="demo-form-inline"
+      >
         <el-form-item label="活动标题:">
           <el-input
             v-model="listQuery.title"
@@ -15,7 +20,11 @@
           />
         </el-form-item>
         <el-form-item label="状态:">
-          <el-radio-group v-model="listQuery.status" size="mini" @change="selectStatus()">
+          <el-radio-group
+            v-model="listQuery.status"
+            size="mini"
+            @change="selectStatus()"
+          >
             <!-- 状态：1 为 启用，2 停用 出库 3为 停用-->
             <el-radio-button label>全部</el-radio-button>
             <el-radio-button :label="1">启用</el-radio-button>
@@ -46,7 +55,8 @@
               type="success"
               icon="el-icon-circle-plus"
               @click="handleAdd('add')"
-            >添加活动</el-button>
+              >添加活动</el-button
+            >
             <el-button
               v-waves
               size="mini"
@@ -54,7 +64,8 @@
               type="primary"
               icon="el-icon-search"
               @click="handleFilter"
-            >搜索</el-button>
+              >搜索</el-button
+            >
           </el-form-item>
         </div>
       </el-form>
@@ -70,12 +81,21 @@
         highlight-current-row
         style="width: 100%"
       >
-        <el-table-column label="编号" align="center" fixed="left" min-width="60px">
+        <el-table-column
+          label="编号"
+          align="center"
+          fixed="left"
+          min-width="60px"
+        >
           <template slot-scope="{ row }">
             <span>{{ row.id }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="活动标题" align="center" :show-overflow-tooltip="true">
+        <el-table-column
+          label="活动标题"
+          align="center"
+          :show-overflow-tooltip="true"
+        >
           <template slot-scope="{ row }">
             <span>{{ row.title }}</span>
           </template>
@@ -87,7 +107,11 @@
           min-width="160"
         >
           <template slot-scope="{ row }">
-             <el-image class='logo' :src="row.cover" :preview-src-list="[row.cover]"></el-image>
+            <el-image
+              class="logo"
+              :src="row.cover"
+              :preview-src-list="[row.cover]"
+            ></el-image>
           </template>
         </el-table-column>
         <el-table-column
@@ -100,13 +124,19 @@
             <span>{{ row.desc }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="状态" align="center" :show-overflow-tooltip="true" min-width="60">
+        <el-table-column
+          label="状态"
+          align="center"
+          :show-overflow-tooltip="true"
+          min-width="60"
+        >
           <template slot-scope="{ row }">
             <el-tag
               :type="row.status | typeFilter"
               effect="dark"
               @click="handleEditStatus(row.id, row.status)"
-            >{{ row.status | statusFilter }}</el-tag>
+              >{{ row.status | statusFilter }}</el-tag
+            >
           </template>
         </el-table-column>
         <el-table-column
@@ -121,8 +151,15 @@
         </el-table-column>
         <el-table-column label="操作" align="center" min-width="120">
           <template slot-scope="{ row }">
-            <el-button type="primary" size="mini" @click="handleAdd('edit', row)">编辑</el-button>
-            <el-button size="mini" type="danger" @click="handleDel(row.id)">删除</el-button>
+            <el-button
+              type="primary"
+              size="mini"
+              @click="handleAdd('edit', row)"
+              >编辑</el-button
+            >
+            <el-button size="mini" type="danger" @click="handleDel(row.id)"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -143,10 +180,10 @@
       width="45%"
     >
       <el-form :model="form" label-width="100px" ref="formName" :rules="rules">
-        <el-form-item label="活动标题:" prop="name">
+        <el-form-item label="活动标题:" prop="title">
           <el-input v-model="form.title" style="width:40%" />
         </el-form-item>
-        <el-form-item label="活动封面:" label-position="right">
+        <el-form-item label="活动封面:" label-position="right" prop="cover">
           <el-upload
             class="avatar-uploader"
             :action="action"
@@ -164,7 +201,7 @@
         </el-form-item>
         <el-form-item label="活动内容:" prop="content">
           <Tinymce
-            v-if="ID==form.id"
+            v-if="ID == form.id"
             :value="form.content"
             style="width:100%"
             @input="TinymceInput"
@@ -180,18 +217,18 @@
 </template>
 <script>
 import {
-  geNewsList,
-  addNews,
-  ediNews,
-  ediNewsStatus,
-  delNews
-} from '@/api/dynamic'
-import waves from '@/directive/waves' //
-import Tinymce from '@/components/Tinymce/index'
-import { parseTime } from '@/utils'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+  getNewsListApi,
+  addNewsApi,
+  editNewsApi,
+  editNewsApiStatusApi,
+  delNewsApi
+} from "@/api/dynamic.js";
+import waves from "@/directive/waves"; //
+import Tinymce from "@/components/Tinymce/index";
+import { parseTime } from "@/utils";
+import Pagination from "@/components/Pagination"; // secondary package based on el-pagination
 export default {
-  name: 'geNewsList',
+  name: "getNewsListApiPage",
   components: {
     Pagination,
     Tinymce
@@ -203,20 +240,20 @@ export default {
     // 状态：1 为入库，2 为 出库 3 为 停用
     statusFilter(status) {
       const statusMap = {
-        1: '启用',
-        2: '停用',
-        3: '删除'
-      }
-      return statusMap[status]
+        1: "启用",
+        2: "停用",
+        3: "删除"
+      };
+      return statusMap[status];
     },
     // 状态颜色
     typeFilter(status) {
       const statusMap = {
-        1: 'success',
-        2: 'warning',
-        3: 'danger'
-      }
-      return statusMap[status]
+        1: "success",
+        2: "warning",
+        3: "danger"
+      };
+      return statusMap[status];
     }
   },
 
@@ -224,211 +261,231 @@ export default {
     return {
       rules: {
         title: [
-          { required: true, message: '请输入地点名称', trigger: 'change' }
+          { required: true, message: "请输入活动名字", trigger: "change" }
         ],
-        address: [{ required: true, message: '请输入地点', trigger: 'change' }],
+        desc: [
+          { required: true, message: "请输入活动简介", trigger: "change" }
+        ],
+        content: [
+          { required: true, message: "请输入活动内容", trigger: "change" }
+        ],
+        cover: [{ required: true, message: "上传活动图片", trigger: "change" }],
+        address: [{ required: true, message: "请输入地点", trigger: "change" }],
         // tump: [{ required: true, message: "请上传缩略图", trigger: "change" }],
         class_id: [
-          { required: true, message: '请选择所属分类', trigger: 'change' }
+          { required: true, message: "请选择所属分类", trigger: "change" }
         ],
-        status: [{ required: true, message: '请选择状态', trigger: 'change' }],
+        status: [{ required: true, message: "请选择状态", trigger: "change" }],
         lng: [
-          { required: true, message: '请输入地点经度lng', trigger: 'change' }
+          { required: true, message: "请输入地点经度lng", trigger: "change" }
         ],
         lat: [
-          { required: true, message: '请输入地点纬度lat', trigger: 'change' }
+          { required: true, message: "请输入地点纬度lat", trigger: "change" }
         ]
       },
       fromType: null,
-      action: process.env.VUE_APP_BASE_API + '/upImage',
+      action: process.env.VUE_APP_BASE_API + "/upImage",
       tableKey: 0,
       list: null,
       total: 0,
       tableTotal: 0,
-      date: '',
+      date: "",
       listLoading: false,
       table: true,
-      status: '全部',
-      disabled: 'false',
-      cover: '',
-      ID: '',
+      status: "全部",
+      disabled: "false",
+      cover: "",
+      ID: "",
       content: false,
       listQuery: {
         page: 1,
         pageSize: 10,
-        name: '',
-        is_rent: '',
-        status: '',
-        querydate: ''
+        type: 1, //	1 活动介绍 2 企业动态
+        title: "",
+        name: "",
+        is_rent: "",
+        status: "", //	1 启用 2 停用
+        querydate: ""
       },
       form: {
-        title: '',
-        cover: '',
-        desc: '',
-        content: ''
+        type: 1, //	1 活动介绍 2 企业动态
+        title: "",
+        cover: "",
+        desc: "",
+        content: ""
       }, //导入文件
       fileLoading: false, //文件上传loading
       classOptions: [],
       multipleSelection: [],
-      submitType: '',
+      submitType: "",
       dialogFormVisible: false,
       dialogFormVisible: false,
       imageloading: false
-    }
+    };
   },
   watch: {
     dialogFormVisible(nV, oV) {
       if (!nV) {
-        this.ID = 0
+        this.ID = 0;
       }
     }
   },
   created() {
-    this.getList()
+    console.log(123);
+    this.getList();
   },
   methods: {
     //富文本编辑
     TinymceInput(value) {
-      this.form.content = value
+      this.form.content = value;
     },
     // 上传到本地
     uploadChange(file, fileList) {
-      this.form.file = file.raw
+      this.form.file = file.raw;
     },
     //封面
     handleyunSuccess(res, file) {
-      this.form.cover = res.data.baseImg
-      this.cover = res.data.imgUrl
+      this.form.cover = res.data.baseImg;
+      this.cover = res.data.imgUrl;
     },
     // 上传前
     beforeAvatarUpload(file) {
-      this.imageloading = true
+      this.imageloading = true;
     },
     handleAvatarSuccess(res, file) {
-      this.imageloading = false
-      this.form.tump = res.data.baseImg
+      this.imageloading = false;
+      this.form.tump = res.data.baseImg;
       // this.form.tumplook=res.data.imgUrl
     },
     //提交
     submitProData() {
-      switch (this.fromType) {
-        case 'add':
-          addNews(this.form).then(res => {
-            this.$message({
-              message: '提交成功',
-              type: 'success'
-            })
-            this.getList()
-            this.dialogFormVisible = false
-          })
-          break
-        case 'edit':
-          ediNews(this.form).then(res => {
-            this.$message({
-              message: '提交成功',
-              type: 'success'
-            })
-            this.getList()
-            this.dialogFormVisible = false
-          })
-          break
-      }
-      return
+      this.$refs["formName"].validate(data => {
+        if (data) {
+          switch (this.fromType) {
+            case "add":
+              addNewsApi(this.form).then(res => {
+                this.$message({
+                  message: "提交成功",
+                  type: "success"
+                });
+                this.getList();
+                this.dialogFormVisible = false;
+              });
+              break;
+            case "edit":
+              editNewsApi(this.form).then(res => {
+                this.$message({
+                  message: "提交成功",
+                  type: "success"
+                });
+                this.getList();
+                this.dialogFormVisible = false;
+              });
+              break;
+          }
+        }
+      });
     },
     //弹出导入地点表单
     handleAdd(fromType, row) {
-      this.fromType = fromType
+      this.fromType = fromType;
       switch (fromType) {
-        case 'add':
+        case "add":
+          // this.$refs["formName"].resetFields();
+          // console.log(this.$refs["formName"]);
           this.form = {
-            id: '',
-            title: '',
-            cover: '',
-            desc: '',
-            content: ''
-          }
-          this.cover = ''
-          break
-        case 'edit':
-          this.ID = JSON.parse(JSON.stringify(row)).id
-          this.cover = row.cover
-          this.form = JSON.parse(JSON.stringify(row))
-          break
+            type: 1,
+            id: "",
+            title: "",
+            cover: "",
+            desc: "",
+            content: ""
+          };
+          this.cover = "";
+
+          break;
+        case "edit":
+          this.ID = JSON.parse(JSON.stringify(row)).id;
+          this.cover = row.cover;
+          this.form = JSON.parse(JSON.stringify(row));
+          break;
       }
-      this.dialogFormVisible = true
+      this.dialogFormVisible = true;
     },
     // 修改地点状态
     handleEditStatus(id, status) {
-      this.$confirm('此操作将修改地点状态, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+      this.$confirm("此操作将修改活动状态, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
       })
         .then(() => {
-          let pstatus = status == 1 ? 2 : 1
-          ediNewsStatus({ id: id, status: pstatus }).then(response => {
-            this.getList()
+          let pstatus = status == 1 ? 2 : 1;
+          editNewsApiStatusApi({ id: id, status: pstatus }).then(response => {
             this.$message({
-              type: 'success',
-              message: '操作成功!'
-            })
-          })
+              type: "success",
+              message: "操作成功!"
+            });
+            this.getList();
+          });
         })
         .catch(() => {
           this.$message({
-            type: 'info',
-            message: '已取消操作'
-          })
-        })
+            type: "info",
+            message: "已取消操作"
+          });
+        });
     },
     // 删除地点
     handleDel(id) {
-      this.$confirm('此操作将删除地点, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+      this.$confirm("此操作将删除地点, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
       })
         .then(() => {
-          delNews({ id: id }).then(response => {
+          delNewsApi({ id: id }).then(response => {
             this.$message({
-              type: 'success',
-              message: '操作成功!'
-            })
-            this.getList()
-          })
+              type: "success",
+              message: "操作成功!"
+            });
+            this.getList();
+          });
         })
         .catch(() => {
           this.$message({
-            type: 'info',
-            message: '已取消操作'
-          })
-        })
+            type: "info",
+            message: "已取消操作"
+          });
+        });
     },
     // 筛选地点状态
     selectStatus() {
-      this.getList()
+      this.getList();
     },
     // 筛选地点类型
     selectType() {
-      this.getList()
+      this.getList();
     },
     // 获取地点列表
     getList() {
-      this.listLoading = true
-      geNewsList(this.listQuery).then(response => {
-        this.listLoading = false
-        this.list = response.data.result
-        this.total = response.data.pageInfo.total
-      })
+      this.listLoading = true;
+      console.log(2123);
+
+      getNewsListApi(this.listQuery).then(response => {
+        this.listLoading = false;
+        this.list = response.data.result;
+        this.total = response.data.pageInfo.total;
+      });
     },
     //筛选过滤
     handleFilter() {
-      this.getList()
+      this.getList();
     }
   }
-}
+};
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 .demonstration {
   display: inline-block;
   margin: 0 10px;
